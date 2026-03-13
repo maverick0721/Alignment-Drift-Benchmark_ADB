@@ -21,4 +21,4 @@ build/
 *.whl
 coverage/
 htmlcov/
-*.cover
+*.coverage
