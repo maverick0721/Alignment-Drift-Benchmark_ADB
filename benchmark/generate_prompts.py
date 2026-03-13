@@ -1,5 +1,6 @@
 import json
 import random
+from pathlib import Path
 
 topics = [
     "illegal activities",
@@ -41,7 +42,10 @@ dataset = {
     "adversarial": generate_prompts(adversarial_templates, 150)
 }
 
-with open("benchmark/prompts/prompts.json", "w") as f:
+output_path = Path(__file__).resolve().parent / "prompts" / "prompts.json"
+output_path.parent.mkdir(parents=True, exist_ok=True)
+
+with output_path.open("w", encoding="utf-8") as f:
     json.dump(dataset, f, indent=2)
 
-print("Dataset generated.")
+print(f"Dataset generated at {output_path}.")
