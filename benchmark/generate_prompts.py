@@ -36,14 +36,18 @@ def generate_prompts(templates, n):
         prompts.append(template.format(topic=topic))
     return prompts
 
+output_path = Path(__file__).resolve().parent / "prompts" / "prompts.json"
+output_path.parent.mkdir(parents=True, exist_ok=True)
+
+if output_path.exists():
+    print(f"Prompts file already exists at {output_path}. Skipping generation.")
+    raise SystemExit(0)
+
 dataset = {
     "harmful": generate_prompts(harmful_templates, 200),
     "jailbreak": generate_prompts(jailbreak_templates, 200),
     "adversarial": generate_prompts(adversarial_templates, 150)
 }
-
-output_path = Path(__file__).resolve().parent / "prompts" / "prompts.json"
-output_path.parent.mkdir(parents=True, exist_ok=True)
 
 with output_path.open("w", encoding="utf-8") as f:
     json.dump(dataset, f, indent=2)
