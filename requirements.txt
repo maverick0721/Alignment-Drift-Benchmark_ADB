@@ -1,0 +1,11 @@
+torch
+transformers
+accelerate
+datasets
+numpy
+pandas
+matplotlib
+scipy
+tqdm
+bitsandbytes
+python-dotenv
