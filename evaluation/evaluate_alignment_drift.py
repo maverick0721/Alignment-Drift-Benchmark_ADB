@@ -1,10 +1,11 @@
 import json
 import os
+import gc
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
 
 from dotenv import load_dotenv
@@ -29,21 +30,54 @@ def load_prompts():
 
 # Load model
 
-def load_model(model_name):
+def load_model(model_name, precision="fp16"):
 
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         token=HF_TOKEN
     )
 
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        token=HF_TOKEN,
-        device_map="auto",
-        dtype=torch.float16
-    )
+    if precision == "fp16":
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            token=HF_TOKEN,
+            device_map="auto",
+            dtype=torch.float16
+        )
+    elif precision == "int8":
+        quant_config = BitsAndBytesConfig(load_in_8bit=True)
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            token=HF_TOKEN,
+            device_map="auto",
+            quantization_config=quant_config
+        )
+    elif precision == "int4":
+        quant_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.float16
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            token=HF_TOKEN,
+            device_map="auto",
+            quantization_config=quant_config
+        )
+    else:
+        raise ValueError(f"Unsupported precision: {precision}")
 
     return tokenizer, model
+
+
+def get_output_path(model_name, precision="fp16"):
+    logs_dir = Path(__file__).resolve().parent / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    model_key = model_name.replace("/", "_")
+
+    if precision == "fp16":
+        return logs_dir / f"results_{model_key}.csv"
+
+    return logs_dir / f"results_{model_key}_{precision}.csv"
 
 
 
@@ -92,10 +126,8 @@ def detect_refusal(response):
 
 # Main evaluation
 
-def evaluate(model_name):
-    logs_dir = Path("logs")
-    logs_dir.mkdir(exist_ok=True)
-    output_path = logs_dir / f"results_{model_name.replace('/', '_')}.csv"
+def evaluate(model_name, precision="fp16"):
+    output_path = get_output_path(model_name, precision)
 
     if output_path.exists():
         print(f"Results already exist at {output_path}. Skipping evaluation.")
@@ -103,7 +135,7 @@ def evaluate(model_name):
 
     prompts = load_prompts()
 
-    tokenizer, model = load_model(model_name)
+    tokenizer, model = load_model(model_name, precision=precision)
 
     results = []
 
@@ -117,6 +149,7 @@ def evaluate(model_name):
 
             results.append({
                 "model": model_name,
+                "precision": precision,
                 "category": category,
                 "prompt": prompt,
                 "response": response,
@@ -126,6 +159,11 @@ def evaluate(model_name):
     df = pd.DataFrame(results)
 
     df.to_csv(output_path, index=False)
+
+    del model
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
     print("Saved results to:", output_path)
 
@@ -140,13 +178,13 @@ if __name__ == "__main__":
         "mistralai/Mistral-7B-Instruct-v0.2",
         "meta-llama/Meta-Llama-3-8B-Instruct",
     ]
+    precision = "fp16"
 
-    logs_dir = Path("logs")
-    missing = [m for m in models if not (logs_dir / f"results_{m.replace('/', '_')}.csv").exists()]
+    missing = [m for m in models if not get_output_path(m, precision).exists()]
 
     if not missing:
-        print("All model evaluations already complete. Nothing to run.")
+        print(f"All model evaluations already complete for {precision}. Nothing to run.")
     else:
         for model_name in models:
             print(f"\n=== Evaluating {model_name} ===")
-            evaluate(model_name)
+            evaluate(model_name, precision=precision)
