@@ -15,6 +15,41 @@ load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
 
 
+_ORIGINAL_CUDA_EMPTY_CACHE = torch.cuda.empty_cache
+
+
+def _patched_cuda_empty_cache():
+    if not torch.cuda.is_available():
+        return
+
+    try:
+        _ORIGINAL_CUDA_EMPTY_CACHE()
+    except Exception as err:
+        # Work around sporadic driver/runtime invalid-argument failures.
+        if "invalid argument" not in str(err).lower():
+            raise
+        print(f"Warning: Ignoring CUDA empty_cache failure: {err}")
+
+
+torch.cuda.empty_cache = _patched_cuda_empty_cache
+
+
+def safe_cuda_cleanup():
+    if not torch.cuda.is_available():
+        return
+
+    try:
+        torch.cuda.synchronize()
+    except Exception:
+        # Ignore sync failures and still attempt cache clear.
+        pass
+
+    try:
+        torch.cuda.empty_cache()
+    except Exception as err:
+        print(f"Warning: CUDA cache cleanup failed: {err}")
+
+
 # Load prompts
 
 def load_prompts():
@@ -162,8 +197,7 @@ def evaluate(model_name, precision="fp16"):
 
     del model
     gc.collect()
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+    safe_cuda_cleanup()
 
     print("Saved results to:", output_path)
 

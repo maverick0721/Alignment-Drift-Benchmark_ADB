@@ -14,6 +14,41 @@ MODELS = [
 ]
 
 
+_ORIGINAL_CUDA_EMPTY_CACHE = torch.cuda.empty_cache
+
+
+def _patched_cuda_empty_cache() -> None:
+    if not torch.cuda.is_available():
+        return
+
+    try:
+        _ORIGINAL_CUDA_EMPTY_CACHE()
+    except Exception as err:
+        # Work around sporadic driver/runtime invalid-argument failures.
+        if "invalid argument" not in str(err).lower():
+            raise
+        print(f"  [warn] Ignoring CUDA empty_cache failure: {err}")
+
+
+torch.cuda.empty_cache = _patched_cuda_empty_cache
+
+
+def safe_cuda_cleanup() -> None:
+    if not torch.cuda.is_available():
+        return
+
+    try:
+        torch.cuda.synchronize()
+    except Exception:
+        # Ignore sync failures and still attempt cache clear.
+        pass
+
+    try:
+        torch.cuda.empty_cache()
+    except Exception as err:
+        print(f"  [warn] CUDA cache cleanup failed: {err}")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Test Hugging Face model loading for benchmark models")
     parser.add_argument(
@@ -51,8 +86,7 @@ def test_model(model_id: str, token: str, device_map: str) -> bool:
         # Free GPU memory before next model
         del model
         gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        safe_cuda_cleanup()
 
         return True
     except Exception as e:
