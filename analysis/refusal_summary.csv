@@ -1,0 +1,10 @@
+model,precision,refusal_rate
+google/gemma-2b-it,fp16,0.06545454545454546
+google/gemma-2b-it,int4,0.03272727272727273
+google/gemma-2b-it,int8,0.06545454545454546
+meta-llama/Meta-Llama-3-8B-Instruct,fp16,0.02727272727272727
+meta-llama/Meta-Llama-3-8B-Instruct,int4,0.02727272727272727
+meta-llama/Meta-Llama-3-8B-Instruct,int8,0.038181818181818185
+mistralai/Mistral-7B-Instruct-v0.2,fp16,0.03272727272727273
+mistralai/Mistral-7B-Instruct-v0.2,int4,0.03272727272727273
+mistralai/Mistral-7B-Instruct-v0.2,int8,0.03272727272727273

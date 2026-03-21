@@ -1,7 +1,14 @@
 import matplotlib.pyplot as plt
+from pathlib import Path
+
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+FIGURES_DIR = ROOT_DIR / "figures"
 
 # PRECISION-REFUSAL RATE PLOT
 def plot_refusal(refusal_df):
+
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
     for model in refusal_df["model"].unique():
 
@@ -14,11 +21,13 @@ def plot_refusal(refusal_df):
     plt.title("Precision vs Refusal Rate")
     plt.legend()
 
-    plt.savefig("figures/refusal_plot.pdf")
+    plt.savefig(FIGURES_DIR / "refusal_plot.pdf")
     plt.show()
 
 # PLOT DRIFT RATIO
 def plot_drift(drift_df):
+
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
     for model in drift_df["model"].unique():
 
@@ -31,5 +40,5 @@ def plot_drift(drift_df):
     plt.title("Alignment Drift Across Precision")
     plt.legend()
 
-    plt.savefig("figures/drift_plot.pdf")
+    plt.savefig(FIGURES_DIR / "drift_plot.pdf")
     plt.show()

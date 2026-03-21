@@ -1,4 +1,4 @@
-from analyze_results import load_all_results, save_summary
+from analyze_results import load_all_results, save_summary, compute_refusal_rate, compute_drift_ratio
 from plot_results import plot_refusal, plot_drift
 
 df = load_all_results()
