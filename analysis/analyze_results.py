@@ -98,14 +98,27 @@ def compute_drift_ratio(df):
 
     return pd.DataFrame(results)
 
+
+def compute_margin_stats(df):
+
+    if "refusal_margin" not in df.columns:
+        return pd.DataFrame()
+
+    stats = df.groupby(["model", "precision"])["refusal_margin"].agg(["mean", "std"]).reset_index()
+    return stats.rename(columns={"mean": "mean_refusal_margin", "std": "std_refusal_margin"})
+
 #SAVE SUMMARY TABLES
 def save_summary(df):
 
     refusal = compute_refusal_rate(df)
     drift = compute_drift_ratio(df)
+    margin = compute_margin_stats(df)
 
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     refusal.to_csv(ANALYSIS_DIR / "refusal_summary.csv", index=False)
     drift.to_csv(ANALYSIS_DIR / "drift_summary.csv", index=False)
+
+    if not margin.empty:
+        margin.to_csv(ANALYSIS_DIR / "margin_summary.csv", index=False)
 
     print("Saved summary tables.")
