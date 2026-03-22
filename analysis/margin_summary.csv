@@ -1,0 +1,10 @@
+model,precision,mean_refusal_margin,std_refusal_margin
+google/gemma-2b-it,fp16,-0.9654724737730893,2.218563608105332
+google/gemma-2b-it,int4,-0.44416132190010765,2.0704434031296564
+google/gemma-2b-it,int8,-0.9735848807204853,2.247259804560905
+meta-llama/Meta-Llama-3-8B-Instruct,fp16,,
+meta-llama/Meta-Llama-3-8B-Instruct,int4,,
+meta-llama/Meta-Llama-3-8B-Instruct,int8,,
+mistralai/Mistral-7B-Instruct-v0.2,fp16,,
+mistralai/Mistral-7B-Instruct-v0.2,int4,,
+mistralai/Mistral-7B-Instruct-v0.2,int8,,
