@@ -1,1 +1,2 @@
 evaluation/logs/** filter=lfs diff=lfs merge=lfs -text
+evaluation/logs/results_mistralai_Mistral-7B-Instruct-v0.2.csv filter=lfs diff=lfs merge=lfs -text
