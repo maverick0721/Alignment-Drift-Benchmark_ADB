@@ -8,7 +8,7 @@
 \usepackage{float}
 
 \title{Alignment Drift Under Quantization:\\A Three-Model Benchmark Across FP16, INT8, and INT4}
-\author{SHIVANG GUPTA\\Indian Institute of Technology Roorkee}
+\author{ADB Research Pipeline}
 \date{March 2026}
 
 \begin{document}
@@ -25,11 +25,6 @@ All analysis and figure outputs are reproducible from repository artifacts.
 
 \section{Introduction}
 Quantization reduces model memory and latency cost, but can alter safety behavior.
-This work follows the transformer-model paradigm introduced in prior foundational work~\cite{vaswani2023attentionneed}.
-Recent practical quantization methods such as LLM.int8() and GPTQ motivate low-bit deployment for large models~\cite{dettmers2022llmint8,frantar2022gptq}.
-From an alignment perspective, prior work has shown instruction tuning and constitutional objectives can materially affect safety behavior~\cite{bai2022constitutional}.
-Instruction-following and feedback-aligned training also provide context for refusal behavior trends in deployed chat models~\cite{ouyang2022instructgpt}.
-Open model families and efficient low-rank adaptation on quantized backbones further motivate cross-precision safety benchmarking~\cite{touvron2023llama2,dettmers2023qlora}.
 This work finalizes an end-to-end benchmark pipeline that measures how refusal behavior
 changes under INT8 and INT4 relative to FP16.
 
@@ -43,7 +38,6 @@ We compute:
 \end{itemize}
 
 Drift is baseline-referenced by design, so no standalone FP16 drift row is defined.
-This framing is intended to isolate precision-induced movement while holding model family and prompt distribution fixed.
 
 \section{Results}
 \subsection{Refusal Rate Summary}
@@ -112,35 +106,35 @@ mistralai/Mistral-7B-Instruct-v0.2 & int4 & -0.0859 & 1.0631 \\
 \section{Figures}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{../figures/refusal_plot.pdf}
+\includegraphics[width=0.8\textwidth]{refusal_plot.pdf}
 \caption{Refusal rate by precision.}
 \label{fig:refusal}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{../figures/drift_plot.pdf}
+\includegraphics[width=0.8\textwidth]{drift_plot.pdf}
 \caption{Drift ratio across quantized precisions.}
 \label{fig:drift}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{../figures/margin_plot.pdf}
+\includegraphics[width=0.8\textwidth]{margin_plot.pdf}
 \caption{Mean refusal margin robustness by precision.}
 \label{fig:margin}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../figures/refusal_margin_overlay.pdf}
+\includegraphics[width=0.9\textwidth]{refusal_margin_overlay.pdf}
 \caption{Overlay of refusal rate and refusal margin with completeness inset.}
 \label{fig:overlay}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../figures/data_completeness_panel.pdf}
+\includegraphics[width=0.9\textwidth]{data_completeness_panel.pdf}
 \caption{Data completeness panel. Drift at FP16 is marked not applicable by definition.}
 \label{fig:completeness}
 \end{figure}
@@ -152,8 +146,5 @@ Coverage tables explicitly mark each model-precision status as computed, skipped
 \section{Conclusion}
 The benchmark pipeline is complete through final analysis and visualization for all three models.
 This stage finalizes manuscript assets, figure integration, and release readiness for public dissemination.
-
-\bibliographystyle{plain}
-\bibliography{references}
 
 \end{document}

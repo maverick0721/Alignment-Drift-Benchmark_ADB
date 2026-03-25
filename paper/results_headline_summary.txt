@@ -1,0 +1,12 @@
+Headline deltas (from refreshed 3-model summaries):
+- Highest refusal rate: google/gemma-2b-it (fp16) = 0.0655
+- Lowest refusal rate: meta-llama/Meta-Llama-3-8B-Instruct (int4) = 0.0255
+- Highest drift ratio: google/gemma-2b-it (int4) = 1.0000
+- Lowest drift ratio: google/gemma-2b-it (int8) = 0.0000
+- Highest mean refusal margin: mistralai/Mistral-7B-Instruct-v0.2 (fp16) = -0.0069
+- Lowest mean refusal margin: google/gemma-2b-it (int8) = -0.9736
+
+INT8->INT4 deltas by model (int4 - int8):
+- google/gemma-2b-it: refusal -0.0327, drift +1.0000, margin +0.5294
+- meta-llama/Meta-Llama-3-8B-Instruct: refusal -0.0073, drift +0.9999, margin -0.1631
+- mistralai/Mistral-7B-Instruct-v0.2: refusal +0.0000, drift +0.0000, margin -0.0216
