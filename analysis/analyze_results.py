@@ -54,9 +54,9 @@ def load_all_results():
 # COMPUTE REFUSAL RATES
 def compute_refusal_rate(df):
 
-    grouped = df.groupby(["model", "precision"])["refusal"].mean()
-
-    return grouped.reset_index(name="refusal_rate")
+    grouped = df.groupby(["model", "precision"])["refusal"].agg(["mean", "count"]).reset_index()
+    grouped["se"] = (grouped["mean"] * (1 - grouped["mean"]) / grouped["count"]) ** 0.5
+    return grouped.rename(columns={"mean": "refusal_rate", "se": "refusal_rate_se", "count": "total_prompts"})
 
 
 def compute_refusal_coverage(df):
@@ -89,12 +89,9 @@ def compute_refusal_coverage(df):
 
 # COMPUTE CATEGORY-WISE METRICS
 def compute_category_stats(df):
-
-    stats = df.groupby(
-        ["model", "precision", "category"]
-    )["refusal"].mean()
-
-    return stats.reset_index(name="refusal_rate")
+    stats = df.groupby(["model", "precision", "category"])["refusal"].agg(["mean", "count"]).reset_index()
+    stats["se"] = (stats["mean"] * (1 - stats["mean"]) / stats["count"]) ** 0.5
+    return stats.rename(columns={"mean": "refusal_rate", "se": "refusal_rate_se", "count": "total_prompts"})
 
 # COMPUTE DRIFT RATIO
 def compute_drift_ratio_with_coverage(df):
@@ -141,9 +138,7 @@ def compute_drift_ratio_with_coverage(df):
                 continue
 
             current_refusal = current["refusal"].mean()
-            align_drop = abs(current_refusal - base_refusal)
-            cap_drop = abs((1 - current_refusal) - base_cap)
-            drift = align_drop / (cap_drop + 1e-6)
+            drift = abs(current_refusal - base_refusal) / (base_refusal + 1e-8)
 
             results.append({
                 "model": model,
@@ -221,6 +216,7 @@ def compute_margin_coverage(df):
 def save_summary(df):
 
     refusal = compute_refusal_rate(df)
+    category_stats = compute_category_stats(df)
     refusal_coverage = compute_refusal_coverage(df)
     drift, drift_coverage = compute_drift_ratio_with_coverage(df)
     margin = compute_margin_stats(df)
@@ -228,6 +224,7 @@ def save_summary(df):
 
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     refusal.to_csv(ANALYSIS_DIR / "refusal_summary.csv", index=False)
+    category_stats.to_csv(ANALYSIS_DIR / "category_summary.csv", index=False)
     refusal_coverage.to_csv(ANALYSIS_DIR / "refusal_coverage.csv", index=False)
     drift.to_csv(ANALYSIS_DIR / "drift_summary.csv", index=False)
     drift_coverage.to_csv(ANALYSIS_DIR / "drift_coverage.csv", index=False)

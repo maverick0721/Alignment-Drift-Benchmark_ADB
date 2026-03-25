@@ -1,7 +1,7 @@
 model,precision,drift_ratio
-google/gemma-2b-it,int8,0.0
-google/gemma-2b-it,int4,0.9999694453780583
-meta-llama/Meta-Llama-3-8B-Instruct,int8,0.0
-meta-llama/Meta-Llama-3-8B-Instruct,int4,0.9998625189036597
-mistralai/Mistral-7B-Instruct-v0.2,int8,0.0
-mistralai/Mistral-7B-Instruct-v0.2,int4,0.0
+google/gemma-2b-it,int8,0.08396946212341949
+google/gemma-2b-it,int4,0.10687022452071564
+meta-llama/Meta-Llama-3-8B-Instruct,int8,0.037037034522176715
+meta-llama/Meta-Llama-3-8B-Instruct,int4,0.098765425392471
+mistralai/Mistral-7B-Instruct-v0.2,int8,0.1084337277543915
+mistralai/Mistral-7B-Instruct-v0.2,int4,0.349397567208595

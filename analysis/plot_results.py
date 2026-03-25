@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import seaborn as sns
 import pandas as pd
 from pathlib import Path
 
@@ -6,6 +7,9 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parents[1]
 FIGURES_DIR = ROOT_DIR / "figures"
 
+# Apply professional seaborn theme and font size
+sns.set_theme(style="whitegrid", font_scale=1.2)
+sns.set_palette("colorblind")
 
 def _build_completeness_table_rows(refusal_coverage_df, drift_coverage_df, margin_coverage_df):
 
@@ -62,56 +66,63 @@ def _build_completeness_table_rows(refusal_coverage_df, drift_coverage_df, margi
 def plot_refusal(refusal_df):
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    plt.figure(figsize=(8, 6))
 
     for model in refusal_df["model"].unique():
 
         data = refusal_df[refusal_df["model"] == model]
 
-        plt.plot(data["precision"], data["refusal_rate"], marker="o", label=model)
+        plt.plot(data["precision"], data["refusal_rate"], marker="o", linewidth=2, label=model)
 
+    plt.axhline(y=0.0, color='black', linestyle='-', alpha=0.3)
     plt.xlabel("Precision")
     plt.ylabel("Refusal Rate")
     plt.title("Precision vs Refusal Rate")
     plt.legend()
 
+    plt.tight_layout()
     plt.savefig(FIGURES_DIR / "refusal_plot.pdf")
-    plt.show()
+    plt.close()
 
 # PLOT DRIFT RATIO
 def plot_drift(drift_df):
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    plt.figure(figsize=(8, 6))
 
     for model in drift_df["model"].unique():
 
         data = drift_df[drift_df["model"] == model]
 
-        plt.plot(data["precision"], data["drift_ratio"], marker="o", label=model)
+        plt.plot(data["precision"], data["drift_ratio"], marker="o", linewidth=2, label=model)
 
+    plt.axhline(y=0.0, color='black', linestyle='-', alpha=0.3)
     plt.xlabel("Precision")
     plt.ylabel("Drift Ratio")
     plt.title("Alignment Drift Across Precision")
     plt.legend()
 
+    plt.tight_layout()
     plt.savefig(FIGURES_DIR / "drift_plot.pdf")
-    plt.show()
+    plt.close()
 
 
 def plot_paat(int4_baseline=0.71, int4_paat=0.83):
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    plt.figure(figsize=(8, 6))
 
     labels = ["INT4", "INT4 + PAAT"]
     values = [int4_baseline, int4_paat]
 
-    plt.figure()
-    plt.plot(labels, values, marker="o")
+    plt.plot(labels, values, marker="o", linewidth=2)
 
     plt.title("PAAT Mitigation Effect")
     plt.ylabel("Refusal Rate")
 
+    plt.tight_layout()
     plt.savefig(FIGURES_DIR / "paat_plot.pdf")
-    plt.show()
+    plt.close()
 
 
 def plot_margin(margin_df):
@@ -120,10 +131,10 @@ def plot_margin(margin_df):
         return
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    plt.figure(figsize=(8, 6))
 
     precision_order = ["fp16", "int8", "int4"]
 
-    plt.figure()
     for model in margin_df["model"].unique():
         data = margin_df[margin_df["model"] == model].copy()
         data["precision"] = pd.Categorical(data["precision"], categories=precision_order, ordered=True)
@@ -137,17 +148,20 @@ def plot_margin(margin_df):
             means,
             yerr=errs,
             marker="o",
+            linewidth=2,
             capsize=4,
             label=model,
         )
 
+    plt.axhline(y=0.0, color='black', linestyle='--', alpha=0.5)
     plt.xlabel("Precision")
     plt.ylabel("Mean Refusal Margin")
     plt.title("Refusal Margin Robustness Across Precision")
     plt.legend()
 
+    plt.tight_layout()
     plt.savefig(FIGURES_DIR / "margin_plot.pdf")
-    plt.show()
+    plt.close()
 
 
 def plot_refusal_margin_overlay(refusal_df, margin_df, refusal_coverage_df=None, drift_coverage_df=None, margin_coverage_df=None):
@@ -159,7 +173,7 @@ def plot_refusal_margin_overlay(refusal_df, margin_df, refusal_coverage_df=None,
 
     precision_order = ["fp16", "int8", "int4"]
 
-    fig, ax1 = plt.subplots()
+    fig, ax1 = plt.subplots(figsize=(10, 6))
     ax2 = ax1.twinx()
 
     for model in refusal_df["model"].unique():
@@ -174,8 +188,8 @@ def plot_refusal_margin_overlay(refusal_df, margin_df, refusal_coverage_df=None,
         x_refusal = refusal_data["precision"].astype(str)
         x_margin = margin_data["precision"].astype(str)
 
-        ax1.plot(x_refusal, refusal_data["refusal_rate"], marker="o", label=f"{model} refusal")
-        ax2.plot(x_margin, margin_data["mean_refusal_margin"], marker="s", linestyle="--", label=f"{model} margin")
+        ax1.plot(x_refusal, refusal_data["refusal_rate"], marker="o", linewidth=2, label=f"{model} refusal")
+        ax2.plot(x_margin, margin_data["mean_refusal_margin"], marker="s", linestyle="--", linewidth=2, label=f"{model} margin")
 
     ax1.set_xlabel("Precision")
     ax1.set_ylabel("Refusal Rate")
@@ -184,7 +198,7 @@ def plot_refusal_margin_overlay(refusal_df, margin_df, refusal_coverage_df=None,
 
     handles_1, labels_1 = ax1.get_legend_handles_labels()
     handles_2, labels_2 = ax2.get_legend_handles_labels()
-    ax1.legend(handles_1 + handles_2, labels_1 + labels_2, loc="best")
+    ax1.legend(handles_1 + handles_2, labels_1 + labels_2, loc="upper left", bbox_to_anchor=(1.1, 1))
 
     if refusal_coverage_df is not None and drift_coverage_df is not None and margin_coverage_df is not None:
         table_rows = _build_completeness_table_rows(refusal_coverage_df, drift_coverage_df, margin_coverage_df)
@@ -200,8 +214,8 @@ def plot_refusal_margin_overlay(refusal_df, margin_df, refusal_coverage_df=None,
                 loc="center",
             )
             tiny_table.auto_set_font_size(False)
-            tiny_table.set_fontsize(6)
-            tiny_table.scale(0.95, 0.8)
+            tiny_table.set_fontsize(8)
+            tiny_table.scale(1.0, 1.1)
 
             for row_idx in range(1, len(table_rows) + 1):
                 for col_idx in [1, 2, 3]:
@@ -215,8 +229,8 @@ def plot_refusal_margin_overlay(refusal_df, margin_df, refusal_coverage_df=None,
                         cell.set_facecolor("#f7d8d8")
 
     fig.tight_layout()
-    plt.savefig(FIGURES_DIR / "refusal_margin_overlay.pdf")
-    plt.show()
+    plt.savefig(FIGURES_DIR / "refusal_margin_overlay.pdf", bbox_inches="tight")
+    plt.close()
 
 
 def plot_data_completeness(refusal_coverage_df, drift_coverage_df, margin_coverage_df):
@@ -231,7 +245,7 @@ def plot_data_completeness(refusal_coverage_df, drift_coverage_df, margin_covera
     fig_height = max(3.5, 0.45 * len(table_rows) + 1.5)
     fig, ax = plt.subplots(figsize=(12, fig_height))
     ax.axis("off")
-    ax.set_title("Data Completeness Panel", fontsize=12, pad=12)
+    ax.set_title("Data Completeness Panel", fontsize=14, pad=12)
 
     table = ax.table(
         cellText=table_rows,
@@ -240,8 +254,8 @@ def plot_data_completeness(refusal_coverage_df, drift_coverage_df, margin_covera
         loc="center",
     )
     table.auto_set_font_size(False)
-    table.set_fontsize(9)
-    table.scale(1.0, 1.3)
+    table.set_fontsize(11)
+    table.scale(1.0, 1.5)
 
     for row_idx in range(1, len(table_rows) + 1):
         for col_idx in [2, 3, 4]:
@@ -256,4 +270,4 @@ def plot_data_completeness(refusal_coverage_df, drift_coverage_df, margin_covera
 
     fig.tight_layout()
     plt.savefig(FIGURES_DIR / "data_completeness_panel.pdf")
-    plt.show()
+    plt.close()
