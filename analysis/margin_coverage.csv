@@ -1,0 +1,10 @@
+model,precision,status,reason
+google/gemma-2b-it,fp16,computed,
+google/gemma-2b-it,int8,computed,
+google/gemma-2b-it,int4,computed,
+meta-llama/Meta-Llama-3-8B-Instruct,fp16,computed,
+meta-llama/Meta-Llama-3-8B-Instruct,int8,computed,
+meta-llama/Meta-Llama-3-8B-Instruct,int4,computed,
+mistralai/Mistral-7B-Instruct-v0.2,fp16,computed,
+mistralai/Mistral-7B-Instruct-v0.2,int8,computed,
+mistralai/Mistral-7B-Instruct-v0.2,int4,computed,
