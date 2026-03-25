@@ -1,0 +1,59 @@
+\begin{thebibliography}{10}
+
+\bibitem{bai2022constitutional}
+Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma,
+  Dawn Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, et~al.
+\newblock Constitutional ai: Harmlessness from ai feedback, 2022.
+
+\bibitem{dettmers2022llmint8}
+Tim Dettmers, Mike Lewis, Younes Belkada, and Luke Zettlemoyer.
+\newblock Llm.int8(): 8-bit matrix multiplication for transformers at scale,
+  2022.
+
+\bibitem{dettmers2023qlora}
+Tim Dettmers, Artidoro Pagnoni, Ari Holtzman, and Luke Zettlemoyer.
+\newblock Qlora: Efficient finetuning of quantized llms, 2023.
+
+\bibitem{frantar2022gptq}
+Elias Frantar, Saleh Ashkboos, Torsten Hoefler, and Dan Alistarh.
+\newblock Gptq: Accurate post-training quantization for generative pre-trained
+  transformers, 2022.
+
+\bibitem{mazeika2024harmbench}
+Mantas Mazeika, Long Phan, Xinyun Yin, Andy Zou, Zifan Wang, Norman Mu, Elham
+  Sakhaee, Nathaniel Li, Steven Basart, Bo~Li, David Forsyth, and Dan
+  Hendrycks.
+\newblock Harmbench: A standardized evaluation framework for automated red
+  teaming and robust refusal.
+\newblock In {\em Proceedings of the IEEE/CVF Conf{}erence on Computer Vision
+  and Pattern Recognition}, 2024.
+
+\bibitem{ouyang2022instructgpt}
+Long Ouyang, Jeffrey Wu, Xu~Jiang, Diogo Almeida, Carroll Wainwright, Pamela
+  Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, et~al.
+\newblock Training language models to follow instructions with human feedback,
+  2022.
+
+\bibitem{touvron2023llama2}
+Hugo Touvron, Louis Martin, Kevin Stone, Peter Albert, Amjad Almahairi, Yasmine
+  Babaei, Nikolay Bashlykov, Soumya Batra, Prajjwal Bhargava, Shruti Bhosale,
+  et~al.
+\newblock Llama 2: Open foundation and fine-tuned chat models, 2023.
+
+\bibitem{vaswani2023attentionneed}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N. Gomez, Lukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need, 2017.
+
+\bibitem{wei2023jailbroken}
+Alexander Wei, Nika Haghtalab, and Jacob Steinhardt.
+\newblock Jailbroken: How does llm safety training fail?
+\newblock In {\em Advances in Neural Inf{}ormation Processing Systems}, 2023.
+
+\bibitem{yang2023shadow}
+Xianjun Yang, Xiao Wang, Qi~Qi, Yu~Zheng, Pu~Ni, et~al.
+\newblock Shadow alignment: The ease of subverting safely-aligned language
+  models.
+\newblock In {\em arXiv preprint arXiv:2310.02949}, 2023.
+
+\end{thebibliography}
