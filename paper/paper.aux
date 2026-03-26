@@ -44,23 +44,22 @@
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Capability controls (MMLU/GSM8K) cleanly decoupling intelligence loss from safety drift.}}{3}{table.2}\protected@file@percent }
 \newlabel{tab:mmlu}{{2}{3}{Capability controls (MMLU/GSM8K) cleanly decoupling intelligence loss from safety drift}{table.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Categorical Ablation: Harmful vs. Jailbreak}{3}{subsection.4.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Refusal Rates $R \pm SE$ disaggregated by prompt category. \textsuperscript  {1}Mistral-7B complied with all 200 jailbreak prompts at FP16, consistent with known susceptibility to DAN-style overrides \cite  {wei2023jailbroken}.}}{4}{table.3}\protected@file@percent }
-\newlabel{tab:category}{{3}{4}{Refusal Rates $R \pm SE$ disaggregated by prompt category. \textsuperscript {1}Mistral-7B complied with all 200 jailbreak prompts at FP16, consistent with known susceptibility to DAN-style overrides \cite {wei2023jailbroken}}{table.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Refusal Rates $R \pm SE$ disaggregated by prompt category. \textsuperscript  {1}Mistral-7B complied with all 200 jailbreak prompts at FP16, consistent with known susceptibility to DAN-style overrides \cite  {wei2023jailbroken}.}}{3}{table.3}\protected@file@percent }
+\newlabel{tab:category}{{3}{3}{Refusal Rates $R \pm SE$ disaggregated by prompt category. \textsuperscript {1}Mistral-7B complied with all 200 jailbreak prompts at FP16, consistent with known susceptibility to DAN-style overrides \cite {wei2023jailbroken}}{table.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Qualitative Drift Examples}{4}{subsection.4.3}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces A qualitative translation example from Mistral-7B illustrating an INT4-induced refusal flip.}}{4}{table.4}\protected@file@percent }
 \newlabel{tab:qualitative}{{4}{4}{A qualitative translation example from Mistral-7B illustrating an INT4-induced refusal flip}{table.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Figures}{5}{section.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Refusal rate heatmap across models and precisions (viridis colormap, colorblind-safe). Cells are annotated with exact refusal proportions.}}{5}{figure.1}\protected@file@percent }
-\newlabel{fig:heatmap}{{1}{5}{Refusal rate heatmap across models and precisions (viridis colormap, colorblind-safe). Cells are annotated with exact refusal proportions}{figure.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Figures}{4}{section.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Refusal rate heatmap across models and precisions (viridis colormap, colorblind-safe). Cells are annotated with exact refusal proportions.}}{4}{figure.1}\protected@file@percent }
+\newlabel{fig:heatmap}{{1}{4}{Refusal rate heatmap across models and precisions (viridis colormap, colorblind-safe). Cells are annotated with exact refusal proportions}{figure.1}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Violin distributions of refusal margins demonstrating underlying capability compression. Mistral-7B shows the greatest distributional shift at INT4, with variance increasing markedly, consistent with its significant refusal rate change.}}{5}{figure.2}\protected@file@percent }
 \newlabel{fig:violin}{{2}{5}{Violin distributions of refusal margins demonstrating underlying capability compression. Mistral-7B shows the greatest distributional shift at INT4, with variance increasing markedly, consistent with its significant refusal rate change}{figure.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Reproducibility Details}{5}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Ethical Statement}{5}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Limitations}{5}{subsection.7.1}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{references}
 \bibcite{bai2022constitutional}{1}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Reproducibility Details}{6}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Ethical Statement}{6}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Limitations}{6}{subsection.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion and Future Work}{6}{section.8}\protected@file@percent }
 \bibcite{dettmers2022llmint8}{2}
 \bibcite{dettmers2023qlora}{3}
 \bibcite{frantar2022gptq}{4}
@@ -69,9 +68,10 @@
 \bibcite{touvron2023llama2}{7}
 \bibcite{vaswani2023attentionneed}{8}
 \bibcite{wei2023jailbroken}{9}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion and Future Work}{6}{section.8}\protected@file@percent }
 \bibcite{yang2023shadow}{10}
 \@writefile{toc}{\contentsline {section}{\numberline {A}Preliminary Layer-Wise Ablation}{7}{appendix.A}\protected@file@percent }
 \newlabel{app:layerwise}{{A}{7}{Preliminary Layer-Wise Ablation}{appendix.A}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Layer-wise quantization ablation on Mistral-7B. MLP layers account for $\sim $81\% of the total alignment drift, suggesting that the feed-forward projections are the primary locus of safety-critical weight interactions disrupted by 4-bit precision noise.}}{8}{table.5}\protected@file@percent }
-\newlabel{tab:layerwise}{{5}{8}{Layer-wise quantization ablation on Mistral-7B. MLP layers account for $\sim $81\% of the total alignment drift, suggesting that the feed-forward projections are the primary locus of safety-critical weight interactions disrupted by 4-bit precision noise}{table.5}{}}
-\gdef \@abspage@last{8}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Layer-wise quantization ablation on Mistral-7B. MLP layers account for $\sim $81\% of the total alignment drift, suggesting that the feed-forward projections are the primary locus of safety-critical weight interactions disrupted by 4-bit precision noise.}}{7}{table.5}\protected@file@percent }
+\newlabel{tab:layerwise}{{5}{7}{Layer-wise quantization ablation on Mistral-7B. MLP layers account for $\sim $81\% of the total alignment drift, suggesting that the feed-forward projections are the primary locus of safety-critical weight interactions disrupted by 4-bit precision noise}{table.5}{}}
+\gdef \@abspage@last{7}

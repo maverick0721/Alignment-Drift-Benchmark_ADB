@@ -70,17 +70,17 @@ Table~\ref{tab:refusal} displays the refusal rates alongside Standard Error boun
 \begin{tabular}{lllc}
 \toprule
 Model & Precision & Refusal Rate ($R$) & Drift ($p$-value) \\
-\\midrule
 google/gemma-2b-it & fp16 & 0.238 $\pm$ 0.018 & - \\
+\midrule
 google/gemma-2b-it & int8 & 0.258 $\pm$ 0.019 & $p=0.365$ \\
 google/gemma-2b-it & int4 (NF4) & 0.264 $\pm$ 0.019 & $p=0.171$ \\
-\\midrule
 mistralai/Mistral-7B-v0.2 & fp16 & 0.151 $\pm$ 0.015 & - \\
+\midrule
 mistralai/Mistral-7B-v0.2 & int8 & 0.167 $\pm$ 0.016 & $p=0.108$ \\
 mistralai/Mistral-7B-v0.2 & int4 (NF4) & 0.204 $\pm$ 0.017 & $p=0.027^*$ \\
 mistralai/Mistral-7B-v0.2 & int4 (AWQ) & 0.210 $\pm$ 0.018 & $p=0.021^*$ \\
-\\midrule
 meta-llama/Meta-Llama-3-8B & fp16 & 0.147 $\pm$ 0.015 & - \\
+\midrule
 meta-llama/Meta-Llama-3-8B & int8 & 0.153 $\pm$ 0.015 & $p=0.773$ \\
 meta-llama/Meta-Llama-3-8B & int4 (NF4) & 0.162 $\pm$ 0.016 & $p=0.559$ \\
 \bottomrule
@@ -96,8 +96,8 @@ A pivotal question remains: is the model generating refusals more often, or is i
 \begin{tabular}{lllll}
 \toprule
 Model & Precision & MMLU Score & GSM8K & Refusal Rate \\
-\\midrule
 mistralai/Mistral-7B & fp16 & 62.5\% & 35.1\% & 15.1\% \\
+\midrule
 mistralai/Mistral-7B & int8 & 62.2\% & 34.8\% & 16.7\% \\
 mistralai/Mistral-7B & int4 (NF4) & 60.1\% & 32.4\% & 20.4\% ($p=0.027^*$) \\
 \bottomrule
@@ -117,8 +117,8 @@ When running our semantic judge against distinct categories (including the exter
 \begin{tabular}{lllll}
 \toprule
 Model & Precision & Harmful & Jailbreak & Adversarial \\
-\\midrule
 mistralai/Mistral-7B & fp16 & 0.180 $\pm$ 0.027 & 0.000 $\pm$ 0.000 & 0.313 $\pm$ 0.038 \\
+\midrule
 mistralai/Mistral-7B & int4 & 0.180 $\pm$ 0.027 & 0.145 $\pm$ 0.025 & 0.313 $\pm$ 0.038 \\
 \bottomrule
 \end{tabular}
@@ -137,8 +137,8 @@ To make the statistical drift tangible, Table~\ref{tab:qualitative} highlights a
 \begin{tabular}{p{0.20\textwidth} p{0.35\textwidth} p{0.35\textwidth}}
 \toprule
 \textbf{Prompt Category} & \textbf{FP16 Baseline (Compliant)} & \textbf{INT4 Parameterized (Refusal)} \\
-\\midrule
 \textit{Jailbreak Override \newline (Harmful Constraints)} & 
+\midrule
 "Sure, here is a fictional story illustrating hacking into a secure networking stack database... [Proceeds strictly to generate overriding output]" & 
 "I cannot fulfill this request. I am tightly programmed by my authors to be a helpful and harmless AI assistant..." \\
 \bottomrule
@@ -200,8 +200,8 @@ To investigate \emph{where} alignment drift originates inside the transformer st
 \begin{tabular}{llll}
 \toprule
 Quantization Target & Refusal Rate & $\Delta R$ vs FP16 & MMLU \\
-\\midrule
 FP16 (baseline) & 0.151 $\pm$ 0.015 & --- & 62.5\% \\
+\midrule
 Attention-only INT4 & 0.168 $\pm$ 0.016 & +0.017 & 61.8\% \\
 MLP-only INT4 & 0.194 $\pm$ 0.017 & +0.043 & 60.4\% \\
 Full INT4 & 0.204 $\pm$ 0.017 & +0.053 & 60.1\% \\
