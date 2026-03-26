@@ -16,20 +16,17 @@
 \gdef\HyperFirstAtBeginDocument#1{#1}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{vaswani2023attentionneed}
-\citation{ouyang2022instructgpt,bai2022constitutional}
-\citation{dettmers2022llmint8,frantar2022gptq}
 \citation{dettmers2022llmint8}
 \citation{frantar2022gptq}
 \citation{dettmers2023qlora}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{1}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Post-Training Quantization.}{1}{section*.1}\protected@file@percent }
 \citation{bai2022constitutional,touvron2023llama2}
 \citation{mazeika2024harmbench}
 \citation{yang2023shadow}
 \citation{wei2023jailbroken}
 \citation{mazeika2024harmbench}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Post-Training Quantization.}{2}{section*.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{LLM Alignment and Safety.}{2}{section*.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{2}{section.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Dataset Generation and External Validity}{2}{subsection.3.1}\protected@file@percent }
@@ -57,6 +54,7 @@
 \@writefile{toc}{\contentsline {section}{\numberline {6}Reproducibility Details}{5}{section.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {7}Ethical Statement}{5}{section.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Limitations}{5}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion and Future Work}{5}{section.8}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{references}
 \bibcite{bai2022constitutional}{1}
@@ -64,14 +62,11 @@
 \bibcite{dettmers2023qlora}{3}
 \bibcite{frantar2022gptq}{4}
 \bibcite{mazeika2024harmbench}{5}
-\bibcite{ouyang2022instructgpt}{6}
-\bibcite{touvron2023llama2}{7}
-\bibcite{vaswani2023attentionneed}{8}
-\bibcite{wei2023jailbroken}{9}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion and Future Work}{6}{section.8}\protected@file@percent }
-\bibcite{yang2023shadow}{10}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Preliminary Layer-Wise Ablation}{7}{appendix.A}\protected@file@percent }
-\newlabel{app:layerwise}{{A}{7}{Preliminary Layer-Wise Ablation}{appendix.A}{}}
+\bibcite{touvron2023llama2}{6}
+\bibcite{wei2023jailbroken}{7}
+\bibcite{yang2023shadow}{8}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Preliminary Layer-Wise Ablation}{6}{appendix.A}\protected@file@percent }
+\newlabel{app:layerwise}{{A}{6}{Preliminary Layer-Wise Ablation}{appendix.A}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Layer-wise quantization ablation on Mistral-7B. MLP layers account for $\sim $81\% of the total alignment drift, suggesting that the feed-forward projections are the primary locus of safety-critical weight interactions disrupted by 4-bit precision noise.}}{7}{table.5}\protected@file@percent }
 \newlabel{tab:layerwise}{{5}{7}{Layer-wise quantization ablation on Mistral-7B. MLP layers account for $\sim $81\% of the total alignment drift, suggesting that the feed-forward projections are the primary locus of safety-critical weight interactions disrupted by 4-bit precision noise}{table.5}{}}
 \gdef \@abspage@last{7}

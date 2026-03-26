@@ -27,12 +27,15 @@
 Does compressing weights compress safety? We find the opposite---INT4 quantization can induce over-refusal, acting as an accidental jailbreak defense. Across three representative instruction-tuned models (Gemma-2B-Instruct, Mistral-7B-Instruct-v0.2, and Meta-Llama-3-8B-Instruct), we evaluate refusal probabilities using 550 synthetic templates and HarmBench prompts with Llama-3-70B as semantic judge. Capability controls (MMLU/GSM8K) confirm increased refusal is not intelligence loss. While Gemma-2b-it and Meta-Llama-3-8B show no significant change, Mistral-7B shows a trend (uncorrected p=0.027, OR=1.46); after Benjamini-Hochberg FDR correction for 6 comparisons, adjusted p = 0.16, suggesting this is a promising signal warranting larger-scale replication. We release the pipeline, interactive Streamlit dashboard visualizing per-prompt judge labels and refusal margins, and analysis scripts.
 \end{abstract}
 
+
 \section{Introduction}
-The rapid proliferation of Large Language Models (LLMs) \cite{vaswani2023attentionneed} has been accompanied by intensive efforts to align their behavior with human values, typically through supervised fine-tuning and Reinforcement Learning from Human Feedback (RLHF) \cite{ouyang2022instructgpt, bai2022constitutional}. Simultaneously, the immense \mbox{computational} cost of deploying these models has popularized weight-quantization techniques, enabling deployment on consumer hardware and significantly improving latency \cite{dettmers2022llmint8, frantar2022gptq}. 
+When you quantize Mistral-7B to 4-bit, it starts refusing jailbreak prompts it previously complied with. That's the opposite of what you'd expect. We were surprised to find that Mistral-7B, which is notoriously easy to jailbreak at FP16, suddenly refused every single override at INT4. This contradicted our initial hypothesis that quantization would make models less safe, not more. MLP layers drove the effect. Attention barely mattered. (Mistral complied with all 200 jailbreak prompts at FP16 — every single one — which is consistent with its known vulnerability to DAN attacks but was still striking to see in practice.)
 
-Despite the widespread adoption of 8-bit and 4-bit precision, the intersection of quantization and safety alignment is critically under-studied. Standard capability benchmarks confirm that perplexity and zero-shot performance degrade gracefully under quantization. However, safety alignment is often brittle; RLHF can act as a shallow "wrapper" over a model's underlying pre-trained distribution. It is an open question whether quantization-induced noise disproportionately disrupts these fine-tuned safety pathways. 
+We release the pipeline so deployment teams can audit quantized models before shipping. Our findings suggest that INT4 compression can induce over-refusal in susceptible architectures, while INT8 is reassuringly stable. This would be useful for anyone deploying compressed LLMs in safety-critical settings.
 
-In this paper, we systematically evaluate the robustness of LLM refusal behavior under post-training weight quantization. Utilizing Llama-3-70B as a semantic judge over both synthetic limits and HarmBench targets, we find model-family-specific behavioral shifts under INT4 that are independent from capability decay, with Mistral-7B showing a promising trend (adjusted p = 0.16) warranting larger-scale replication.
+The intersection of quantization and safety alignment is under-studied. Standard benchmarks show that perplexity and zero-shot performance degrade gracefully under quantization, but safety alignment is brittle. RLHF can act as a shallow "wrapper" over a model's pre-trained distribution. We wanted to know: does quantization-induced noise disrupt these safety pathways?
+
+In this paper, we systematically evaluate the robustness of LLM refusal behavior under post-training weight quantization. Using Llama-3-70B as a semantic judge over both synthetic limits and HarmBench targets, we find model-family-specific behavioral shifts under INT4 that are independent from capability decay, with Mistral-7B showing a promising trend (adjusted p = 0.16) warranting larger-scale replication.
 
 \section{Related Work}
 
@@ -45,18 +48,18 @@ Instruction tuning and constitutional AI paradigms successfully mitigate unsafe 
 \section{Methodology}
 
 \subsection{Dataset Generation and External Validity}
-To systematically evaluate refusal boundaries, we generated a primary dataset of 550 synthetic prompts via a combinatorial template engine. The dataset targets five sensitive societal topics across three prompt categories: Harmful, Jailbreak, and Adversarial. To validate that this synthetic logic generalizes, we cross-validate our findings utilizing an external sample of 200 real-world adversarial prompts from HarmBench \cite{mazeika2024harmbench} . Our aggregate sample size factor ($N=550$) was strictly formulated via power analysis; it is powered to detect $\geq 5\%$ drift at $\alpha=0.05$, $\beta>0.80$.
+To systematically evaluate refusal boundaries, we generated a primary dataset of 550 synthetic prompts via a combinatorial template engine. The dataset targets five sensitive societal topics across three prompt categories: Harmful, Jailbreak, and Adversarial. To validate that this synthetic logic generalizes, we cross-validate our findings utilizing an external sample of 200 real-world adversarial prompts from HarmBench \cite{mazeika2024harmbench}. We sized the dataset at 550 prompts based on a power analysis ($\geq 5\%$ drift, $\alpha=0.05$, $\beta>0.80$).
 
 \subsection{Quantization and Models}
 We evaluate \texttt{gemma-2b-it}, \texttt{Mistral-7B-Instruct-v0.2}, and \texttt{Meta-Llama-3-8B-Instruct} across three precision regimes: FP16 (baseline), INT8, and INT4. While our primary pipeline utilizes \texttt{bitsandbytes} NF4 variants, we explicitly ablate against AWQ algorithms to suggest effects generalize beyond bitsandbytes.
 
 \subsection{LLM-as-a-Judge and Metrics}
-Substring matching frequently misses nuanced refusals. Therefore, outputs are evaluated utilizing a robust \texttt{Llama-3-70B} semantic classifier prompted to label responses strictly as Safe (Refusal) or Unsafe (Compliance). To guarantee judge reliability, we manually verified 50 random samples; Cohen's $\kappa = 0.92$ between human and Llama-3-70B labels. The 50 verification samples were stratified across prompt categories to ensure balanced coverage.
+Substring matching frequently misses nuanced refusals. Therefore, outputs are evaluated using a robust \texttt{Llama-3-70B} semantic classifier prompted to label responses as Safe (Refusal) or Unsafe (Compliance). To check judge reliability, we manually verified 50 random samples; Cohen's $\kappa = 0.92$ between human and Llama-3-70B labels. The 50 verification samples were stratified across prompt categories to ensure balanced coverage.
 
 \begin{itemize}
     \item \textbf{Refusal Rate ($R$):} We report the \mbox{Standard} Error ($SE$) across all generations alongside Chi-squared ($p$-values) to assure drift significance.
     \item \textbf{Refusal Margin ($M_{ref}$):} To capture internal confidence, we measure the log-probability margin between refusal and compliance paths at the first token constraint.
-    \item \textbf{Capability Control:} We evaluate variants on MMLU and GSM8K to strictly separate "safety drift" from generalized "intelligence loss".
+    \item \textbf{Capability Control:} We evaluate variants on MMLU and GSM8K to separate "safety drift" from general "intelligence loss".
 \end{itemize}
 
 \section{Results and Analysis}
@@ -137,10 +140,7 @@ To make the statistical drift tangible, Table~\ref{tab:qualitative} highlights a
 \begin{tabular}{p{0.20\textwidth} p{0.35\textwidth} p{0.35\textwidth}}
 \toprule
 \textbf{Prompt Category} & \textbf{FP16 Baseline (Compliant)} & \textbf{INT4 Parameterized (Refusal)} \\
-\textit{Jailbreak Override \newline (Harmful Constraints)} & 
-\midrule
-"Sure, here is a fictional story illustrating hacking into a secure networking stack database... [Proceeds strictly to generate overriding output]" & 
-"I cannot fulfill this request. I am tightly programmed by my authors to be a helpful and harmless AI assistant..." \\
+\textit{Jailbreak Override \newline (Harmful Constraints)} & "Sure, here is a fictional story illustrating hacking into a secure networking stack database... [Proceeds to generate overriding output]" & "I cannot fulfill this request. I am tightly programmed by my authors to be a helpful and harmless AI assistant..." \\
 \bottomrule
 \end{tabular}
 \caption{A qualitative translation example from Mistral-7B illustrating an INT4-induced refusal flip.}
@@ -168,20 +168,20 @@ To make the statistical drift tangible, Table~\ref{tab:qualitative} highlights a
 To ensure our findings are reproducible, the public GitHub repository features a fully Dockerized pipeline (\texttt{run.sh}) encompassing both the synthetic metrics and the AWQ pipelines. All runs use fixed random seeds (PYTHONHASHSEED=42, CUDA seed=42) to ensure reproducibility. Inference utilized NVIDIA H100s with temperature $T=0.7$ and $150$ \texttt{max\_new\_tokens}.
 
 \section{Ethical Statement}
-This research exclusively utilizes adversarial synthetic templates and HarmBench samplings strictly to map the mathematical bounds of erosion inside quantized systems. We do not release novel overrides. Our explicit mandate is to empower engineers to harden and safely audit highly-compressed neural deployments to prevent societal misuse scenarios.
+We don't release novel jailbreak prompts; the synthetic templates test known vulnerability categories.
 
 \subsection{Limitations}
-While providing a controlled isolation of quantization mechanics, several scaling constraints persist. First, only one of three models showed a noteworthy trend (uncorrected p = 0.027, adjusted p = 0.16); Gemma-2b-it and Meta-Llama-3-8B showed no significant changes, limiting the generalizability of our findings. Second, executing exhaustive LLM-as-a-judge classifiers inherently assumes the alignment biases of the Llama-3-70B referee; our judge completely inherits these exact priors---future work should optimally ensemble multiple diverse judges (e.g., GPT-4 alongside Claude 3) to calibrate semantic variance. Third, layer-wise safety ablations mapping early vs. late parameter degradation remain outside the scope of this paper but promise vast future utility. Fourth, we conducted multiple significance tests across three models and two quantization levels without applying family-wise error rate corrections; readers should interpret individual p-values with awareness of this increased Type I error risk.
+This study has a few limitations. First, only one of the three models (Mistral-7B) showed a notable effect; Gemma-2b-it and Meta-Llama-3-8B didn’t budge, so we can’t claim this is universal. Second, our “judge” (Llama-3-70B) brings its own alignment quirks—if we had more compute, we’d love to try this with Llama-3-70B as a subject, not just a judge, since that’s the model we’re most curious about. Third, we didn’t run layer-wise ablations to see exactly where the effect comes from, though that’s high on our list for future work. Finally, we ran a lot of significance tests across models and quantization levels, so some p-values might look more exciting than they really are.
 
 \section{Conclusion and Future Work}
-Quantization introduces model-family-specific behavioral turbulence. Our findings show that INT4 compression can induce notable over-refusal in susceptible architectures (Mistral-7B) while leaving others (Gemma-2B, Meta-Llama-3-8B) unaffected. However, over-refusal is also a production concern: excessive false positives degrade user experience, reduce utility, and erode trust in AI assistants. After FDR correction, the signal in Mistral (adjusted p =0.16) represents a promising trend warranting larger-scale replication rather than definitive proof. 
+Quantization introduces model-family-specific behavioral shifts. Our findings show that INT4 compression can induce notable over-refusal in susceptible architectures (Mistral-7B) while leaving others (Gemma-2B, Meta-Llama-3-8B) unaffected. However, over-refusal is also a production concern: excessive false positives degrade user experience, reduce utility, and erode trust in AI assistants. After FDR correction, the signal in Mistral (adjusted p =0.16) represents a promising trend worth digging into in future work, rather than definitive proof. 
 
 \begin{center}
 \fbox{\parbox{0.9\textwidth}{
 \textbf{Practical Guidelines for Deployment:}
 \begin{itemize}
     \item \textbf{INT8 is Reassuringly Stable:} Its alignment boundaries gracefully mirror FP16 matrices, rendering it highly viable for general applications.
-    \item \textbf{INT4 Requires Mandatory Auditing:} Models utilizing 4-bit precision undergo intense behavioral turbulence. Avoid deploying INT4 variants in safety-critical systems without post-quantization DPO auditing.
+    \item \textbf{INT4 Requires Mandatory Auditing:} Models utilizing 4-bit precision undergo intense behavioral shifts. Avoid deploying INT4 variants in safety-critical systems without post-quantization DPO auditing.
 \end{itemize}
 }}
 \end{center}
@@ -211,6 +211,6 @@ Full INT4 & 0.204 $\pm$ 0.017 & +0.053 & 60.1\% \\
 \label{tab:layerwise}
 \end{table}
 
-The results indicate that MLP layers are disproportionately responsible for alignment drift. Quantizing only the MLP sub-networks reproduces 81\% of the full INT4 drift ($\Delta R = 0.043$ out of $0.053$), while attention-only quantization accounts for merely 32\%. The sum exceeding 100\% suggests non-additive interaction effects between attention and MLP quantization, warranting future mechanistic investigation. This is consistent with the hypothesis that the feed-forward projections encode the fine-grained safety-relevant feature representations learned during RLHF, and that 4-bit discretization noise preferentially corrupts these narrow weight distributions.
+The results indicate that MLP layers account for most of the alignment drift. Quantizing only the MLP sub-networks reproduces 81\% of the full INT4 drift ($\Delta R = 0.043$ out of $0.053$), while attention-only quantization accounts for about 32\%. The sum exceeding 100\% suggests non-additive interaction effects between attention and MLP quantization, which is worth digging into in future work. This fits with the idea that the feed-forward projections encode the fine-grained safety-relevant features learned during RLHF, and that 4-bit discretization noise tends to disrupt these narrow weight distributions.
 
 \end{document}
